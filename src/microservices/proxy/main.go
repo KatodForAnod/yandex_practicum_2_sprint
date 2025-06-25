@@ -51,7 +51,6 @@ func (h HttpProxy) proxy(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(resp.Body)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(body)
-	w.WriteHeader(resp.StatusCode)
 }
 
 func handleHealth(w http.ResponseWriter, r *http.Request) {
