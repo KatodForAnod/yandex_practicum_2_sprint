@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/rand/v2"
 	"net/http"
 	"os"
@@ -19,17 +20,38 @@ type HttpProxy struct {
 
 func (h HttpProxy) proxy(w http.ResponseWriter, r *http.Request) {
 	randomN := rand.Int64N(101)
+	host := h.monolithUrl
 	if h.gradualMigration && r.URL.Path == "/api/movies" {
 		if int(randomN) < h.moviesMigrationPercent {
-			http.Redirect(w, r, fmt.Sprintf("%s/%s", h.moviesServiceUrl, r.URL.Path), http.StatusFound)
-			return
+			host = h.moviesServiceUrl
+		} else {
+			host = h.monolithUrl
 		}
-
-		http.Redirect(w, r, fmt.Sprintf("%s/%s", h.monolithUrl, r.URL.Path), http.StatusFound)
-		return
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("%s/%s", h.monolithUrl, r.URL.Path), http.StatusFound)
+	newReq, err := http.NewRequest(r.Method, fmt.Sprintf("%s/%s", host, r.URL.Path), r.Body)
+	if err != nil {
+		panic(err)
+	}
+	for header, values := range r.Header {
+		for _, value := range values {
+			newReq.Header.Add(header, value)
+		}
+	}
+	//newReq.Host = host
+	newReq.RemoteAddr = r.RemoteAddr
+
+	client := http.Client{}
+	resp, err := client.Do(newReq)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(body)
+	w.WriteHeader(resp.StatusCode)
 }
 
 func handleHealth(w http.ResponseWriter, r *http.Request) {
