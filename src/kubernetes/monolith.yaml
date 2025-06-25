@@ -22,8 +22,8 @@ spec:
     spec:
       containers:
       - name: monolith
-        image:  ghcr.io/db-exp/cinemaabysstest/monolith:latest
-        imagePullPolicy: Always
+        image:  yandex_practicum_2_sprint_monolith
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
         env:

@@ -22,8 +22,8 @@ spec:
     spec:
       containers:
       - name: movies-service
-        image: ghcr.io/db-exp/cinemaabysstest/movies-service:latest
-        imagePullPolicy: Always
+        image: yandex_practicum_2_sprint_movies-service
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8081
         env:
