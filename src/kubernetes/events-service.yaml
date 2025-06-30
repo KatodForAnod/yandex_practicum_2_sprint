@@ -22,8 +22,8 @@ spec:
     spec:
       containers:
         - name: events-service
-          image: yandex_practicum_2_sprint_events-service
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/katodforanod/yandex_practicum_2_sprint/events-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8082
           env:

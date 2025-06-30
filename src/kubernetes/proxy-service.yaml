@@ -22,8 +22,8 @@ spec:
     spec:
       containers:
         - name: proxy-service
-          image: yandex_practicum_2_sprint_proxy-service
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/katodforanod/yandex_practicum_2_sprint/proxy-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
           env:
