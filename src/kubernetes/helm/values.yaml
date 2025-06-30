@@ -33,9 +33,9 @@ database:
 monolith:
   enabled: true
   image:
-    repository: yandex_practicum_2_sprint_monolith
+    repository: ghcr.io/katodforanod/yandex_practicum_2_sprint/monolith
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   replicas: 1
   resources:
     limits:
@@ -53,9 +53,9 @@ monolith:
 proxyService:
   enabled: true
   image:
-    repository: yandex_practicum_2_sprint_proxy-service
+    repository: ghcr.io/katodforanod/yandex_practicum_2_sprint/proxy-service
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   replicas: 1
   resources:
     limits:
@@ -73,9 +73,9 @@ proxyService:
 moviesService:
   enabled: true
   image:
-    repository: yandex_practicum_2_sprint_movies-service
+    repository: ghcr.io/katodforanod/yandex_practicum_2_sprint/movies-service
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   replicas: 1
   resources:
     limits:
@@ -93,9 +93,9 @@ moviesService:
 eventsService:
   enabled: true
   image:
-    repository: yandex_practicum_2_sprint_events-service
+    repository: ghcr.io/katodforanod/yandex_practicum_2_sprint/events-service
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   replicas: 1
   resources:
     limits:
@@ -115,7 +115,7 @@ kafka:
   image:
     repository: wurstmeister/kafka
     tag: 2.13-2.7.0
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   replicas: 1
   resources:
     limits:
@@ -145,7 +145,7 @@ zookeeper:
   image:
     repository: wurstmeister/zookeeper
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   replicas: 1
   resources:
     limits:
