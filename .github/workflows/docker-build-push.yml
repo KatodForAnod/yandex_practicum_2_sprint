@@ -53,6 +53,7 @@ jobs:
       - name: Build and push Monolith Docker image
         uses: docker/build-push-action@v4
         with:
+          platforms: linux/amd64,linux/arm64
           context: ./src/monolith
           push: true
           tags: ${{ steps.meta-monolith.outputs.tags }}
@@ -75,6 +76,7 @@ jobs:
       - name: Build and push Movies Service Docker image
         uses: docker/build-push-action@v4
         with:
+          platforms: linux/amd64,linux/arm64
           context: ./src/microservices/movies
           push: true
           tags: ${{ steps.meta-movies.outputs.tags }}
@@ -97,6 +99,7 @@ jobs:
       - name: Build and push Movies Service Docker image
         uses: docker/build-push-action@v4
         with:
+          platforms: linux/amd64,linux/arm64
           context: ./src/microservices/events
           push: true
           tags: ${{ steps.meta-events.outputs.tags }}
@@ -119,6 +122,7 @@ jobs:
       - name: Build and push Movies Service Docker image
         uses: docker/build-push-action@v4
         with:
+          platforms: linux/amd64,linux/arm64
           context: ./src/microservices/proxy
           push: true
           tags: ${{ steps.meta-proxy.outputs.tags }}
