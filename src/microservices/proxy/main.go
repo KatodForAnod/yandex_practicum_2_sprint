@@ -29,7 +29,7 @@ func (h HttpProxy) proxy(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	newReq, err := http.NewRequest(r.Method, fmt.Sprintf("%s/%s", host, r.URL.Path), r.Body)
+	newReq, err := http.NewRequest(r.Method, fmt.Sprintf("%s%s?%s", host, r.URL.Path, r.URL.RawQuery), r.Body)
 	if err != nil {
 		panic(err)
 	}
@@ -50,6 +50,8 @@ func (h HttpProxy) proxy(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(resp.Body)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(resp.StatusCode)
+
 	w.Write(body)
 }
 
