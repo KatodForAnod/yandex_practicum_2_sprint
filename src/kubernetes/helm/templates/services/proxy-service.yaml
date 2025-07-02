@@ -1,15 +1,12 @@
-{{- if .Values.proxyService.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: proxy-service
-  namespace: {{ .Values.global.namespace }}
+  namespace: cinemaabyss
   labels:
     app: proxy-service
-    app.kubernetes.io/name: {{ include "cinemaabyss.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
-  replicas: {{ .Values.proxyService.replicas }}
+  replicas: 1
   selector:
     matchLabels:
       app: proxy-service
@@ -24,19 +21,51 @@ spec:
         app: proxy-service
     spec:
       containers:
-      - name: proxy-service
-        ..... тут
+        - name: proxy-service
+          image: ghcr.io/katodforanod/yandex_practicum_2_sprint/proxy-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PORT
+              value: "8000"
+          envFrom:
+            - configMapRef:
+                name: cinemaabyss-config
+            - secretRef:
+                name: cinemaabyss-secrets
+          resources:
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: dockerconfigjson
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: proxy-service
-  namespace: {{ .Values.global.namespace }}
-  labels:
-    app: proxy-service
-    app.kubernetes.io/name: {{ include "cinemaabyss.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+  namespace: cinemaabyss
 spec:
   selector:
-    ... и тут
-{{- end }}
+    app: proxy-service
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: ClusterIP

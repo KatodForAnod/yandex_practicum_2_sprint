@@ -4,9 +4,47 @@
 
 1. Спроектируйте to be архитектуру КиноБездны, разделив всю систему на отдельные домены и организовав интеграционное взаимодействие и единую точку вызова сервисов.
 Результат представьте в виде контейнерной диаграммы в нотации С4.
-Добавьте ссылку на файл в этот шаблон
-[ссылка на файл](ссылка)
 
+```aiignore
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Context.puml
+
+title Диаграмма контейнеров
+
+Person(Пользователь, "Пользователь", "Ноутбуки, смарт ТВ, мобильные устройства")
+System(Api_gateway, "API gateway", "Маршрутизирует запросы")
+System(Сервис_авторизации, "Сервис авторизации", "Авторизация пользователей")
+System(Поиск_фильмов, "Сервис_поиска", "Выполняет поиск по выбранным критериям, ключевыми словами, ипользуя метаданные")
+System_Ext(Elasticsearch, "Elasticsearch", "Хранилище необходимоц информации по фильмам необходимой для поиска")
+System_Ext(Система_рекомендаций, "Система рекомендаций", "Внешняя рекомендательная система")
+System(Платежная_система, "Платежная система", "")
+System(Сервис_просмотра_фильмов_плеер, "Плеер фильмов", "Сервис (плеер) для просмотра фильмов")
+System(Основной_сервис, "Сервис фильмов", "Добавление в избранное, оценка, отзыв фильмов")
+System_Ext(Postgres, "Postgres", "База данных")
+System_Ext(S3, "S3", "Хранилище")
+
+
+
+Rel(Пользователь, Api_gateway, "Отправляет/получает данные")
+Rel(Api_gateway, Сервис_авторизации, "Авторизация/Регистрация")
+Rel(Api_gateway, Поиск_фильмов, "Поиск фильмов по метаданным")
+Rel(Api_gateway, Система_рекомендаций, "Рекомендации по истории поиска пользователя")
+Rel(Api_gateway, Основной_сервис, "Избранное, оценка, отзывы")
+Rel(Основной_сервис, Платежная_система, "Оплата")
+Rel(Api_gateway, Сервис_просмотра_фильмов_плеер, "Просмотр фильмов")
+Rel(Сервис_просмотра_фильмов_плеер, S3, "Получение данных")
+Rel(Основной_сервис, Postgres, "Отправляет/получает данные")
+
+Rel(Сервис_авторизации, Postgres, "Отправляет/получает данные")
+Rel(Поиск_фильмов, Elasticsearch, "Получает данные")
+
+@enduml
+```
+```markdown
+[PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/fLRBJjj05DtdAwRPD4Y1BEYgAn1YKQcLK57NaKbSiEJOo7O4x80KIfMgj8X55osbbRetWHI7FFY5cJ_gkTUE4ni7KXeKPnvdxkFCFTSik9xcUFMQcNjYM1MpNjN5XkTjkizB9KVRcbitl8twMjtLdOfjURhbpLNiMcdJr2mwC-jwLTDOAoqzcrsXfJUlNfPgcklf3fRAItHYsvlR9EjFHTt2qHfC26z35szjqxIt36jTc8Qb2ysgYiIsuRWOsGAkXMbNDDFSWOqunhJvd6TufYxagGoaBo_LBfuz_Fb2tiY1xAjzsPOTsPTjR0raAvTRqHtNjWho1wPTzL5UqxBq6OXvKUGdRULfxxiSg0PMBbG37eAYK7laJksgVI5_oPEYm7GWBn0FcUYhfcmBdDXJ-nn1XqPaDJ-JMzq1PRN2ugPHNjSyVKlRWOV5bHSYch73Rspy25zo6o2eWCP820wlaUujsONLviYY_CdvjW3TAmFImia15kYqhmxn6v3fCPJ8Hd44d-_kg6CXRxDO8hR7uY0cOLtUbDMxY15YfvNoNcPZ30Gnj7a2tjW163mESuqXF1G8gebRe0llCyqzN3d5I87mxx7i5QaCkkgJUe_0w41F1dHZtJ1ccW8IZ781oSTqW_28xQlOU3jEghoyxHMMJLIxKN5rpQbi8Dx4d1Fu7KM6f17A1nG15I5LXZh0ymeRO48TalS-o25wUqFQmmp7AFCfkuppiYCmx0wlOyXW8bOG7N3HjSbG6NxQh0qa2PDNaSzEU2LZI3496LuGQ-g8hWVUCw2HQ33p2R0tRZfH8Tq8_2U4bfFGK8yfJDeSG9EAFr87aqqAz5ELIAL7LOiZGrSy4KbOFgsNmkZSpEWEqixILaP1dW7MvogaPuUoZesdVMM4Siez1fhb8AZCK60jmGgDHG5C6-MDAcFC3R59aQ7Ccm1FY8sBPiLslNL7T-5hE6I_Ns3vchfhB0rra3ovEW_Swdos2035vxLktjD_a-qGHEqphvnhs0jAaLuRaBKVDeUaKib1mioK3J6pqvNaEKAx30kE0WcNCztSr-_YlHJnKJkxstDw4pAPLitdcLjHSuciXBa6YVOneRLFIFcXGluwVKNoAuoButwZKpMDCnOeeVo7A-9VkqGIVbT9dCJZFR268eKq-DqLAJofkYce6jFnevIKaSa4zVolfxWfPEid_SOTOoSxy0NTgl9_Y7y1)
+```
 # Задание 2
 
 ### 1. Proxy
@@ -59,7 +97,19 @@
 Необходимые тесты для проверки этого API вызываются при запуске npm run test:local из папки tests/postman 
 Приложите скриншот тестов и скриншот состояния топиков Kafka из UI http://localhost:8090 
 
+```markdown
+[Postman_tests](./data/postman_tests.png)
+```
+```markdown
+[kafka_ui.png](./data/kafka_ui.png)
+```
 # Задание 3
+
+`
+Важно: из-за того что система моего компьютера использует архитектуру arm, images с dockerHub выдавали ошибку в кубере, сбилдил все images локально и указал куберу на локальное хранилище.
+Если делать pull c dockerHub вручную c указанием нужной платформы, то  image скачивается и запускается, но я не нашел способа указать необходимую платформу в кубере.
+Сразу залить на docker rigestry нужную архитектуру не смог так как падают тесты.
+`
 
 Команда начала переезд в Kubernetes для лучшего масштабирования и повышения надежности. 
 Вам, как архитектору осталось самое сложное:
@@ -275,6 +325,12 @@ cat .docker/config.json | base64
 #### Шаг 3
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
 
+```markdown
+[cinemaabyss.example.com_api_movies_3rd_exercise.png](./data/cinemaabyss.example.com_api_movies_3rd_exercise.png)
+```
+```markdown
+[events_producer_consumer_3rd_exercise.png](./data/events_producer_consumer_3rd_exercise.png)
+```
 
 # Задание 4
 Для простоты дальнейшего обновления и развертывания вам как архитектуру необходимо так же реализовать helm-чарты для прокси-сервиса и проверить работу 
@@ -349,6 +405,14 @@ minikube tunnel
 Потом вызовите 
 https://cinemaabyss.example.com/api/movies
 и приложите скриншот развертывания helm и вывода https://cinemaabyss.example.com/api/movies
+
+```markdown
+[cinemaabyss.example.com_api_movies_4rd_exercise.png](./data/cinemaabyss.example.com_api_movies_4rd_exercise.png)
+```
+
+```markdown
+[helm_4rd_exercise.png](./data/helm_4rd_exercise.png)
+```
 
 ## Удаляем все
 
